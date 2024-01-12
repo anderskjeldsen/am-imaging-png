@@ -24,6 +24,9 @@ platforms:
     asmCommand: vasmm68k_mot
     gccAdditionalLibraries:
       - socket
+      - png15
+      - z
+      - m
     additionalHeaders:
     additionalAsmSources:
     additionalCSources:
@@ -32,24 +35,28 @@ platforms:
       - c-libs/zlib/nofpu/include
     gccAdditionalOptions:
       - -noixemul     
-      - -L c-libs/libpng15/lib
-      - -l png15
-      - -L c-libs/zlib/nofpu/lib
-      - -l z
+#      - -L c-libs/libpng15/lib
+#      - -l png15
+#      - -L c-libs/zlib/nofpu/lib
+#      - -l z
+    gccLibraryPaths:
+      - c-libs/libpng15/lib
+      - c-libs/zlib/nofpu/lib
   - id: macos-arm
     extends: libc
     gccCommand: gcc
+    gccAdditionalLibraries:
+      - png16
     additionalHeaders:
     additionalAsmSources:
     additionalCSources:
     additionalIncludePaths:
       - /opt/homebrew/include
-#      - c-libs/zlib/nofpu/include
-    gccAdditionalOptions:
-      - -L /opt/homebrew/lib
-      - -l png
-#      - -L c-libs/zlib/nofpu/lib
-#      - -l z
+#    gccAdditionalOptions:
+#      - -L /opt/homebrew/lib
+#      - -l png
+    gccLibraryPaths:
+      - /opt/homebrew/lib
 buildTargets:
   - id: amigaos_docker
     platform: amigaos
