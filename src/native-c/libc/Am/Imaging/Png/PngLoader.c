@@ -111,15 +111,9 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
     }
 
     printf("load 8\n");
-    int *jmp = png_jmpbuf(png_ptr);
-    if (!jmp) {
-        __throw_simple_exception("jmp_buf NULL", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
-//        printf("jmp_buf NULL\n");
-        goto __exit3;
-    }
-    printf("load 8b\n");
-
-    if (setjmp(jmp)) {        
+    
+    if (setjmp(png_jmpbuf(png_ptr))) {        
+        printf("setjmp failed\n");
         __throw_simple_exception("Error during init_io", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
 //        printf("[read_png_file] Error during init_io");
         goto __exit3;
@@ -152,7 +146,7 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
 
         printf("Palette size: %d\n", 1 << bit_depth);
 
-        function_result fr = Am_Imaging_Image_createIndexed_0(width, height, 1 << bit_depth);
+        function_result fr = Am_Imaging_Image_f_createIndexed_0(width, height, 1 << bit_depth);
         if (fr.exception) {
             __result.exception = fr.exception;
             goto __exit3;
