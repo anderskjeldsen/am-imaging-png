@@ -132,7 +132,6 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
     bit_depth = png_get_bit_depth(png_ptr, info_ptr);
     printf("load 15, w: %d, h: %d, coltype: %d, bit depth: %d \n", width, height, color_type, bit_depth);
     number_of_passes = png_set_interlace_handling(png_ptr);
-    png_read_update_info(png_ptr, info_ptr);
 
     printf("load 16\n");
     /* read file */
@@ -142,6 +141,8 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
     }
 
     if (color_type == PNG_COLOR_TYPE_PALETTE) {
+        png_read_update_info(png_ptr, info_ptr);
+
         printf("load 17a\n");
 
         printf("Palette size: %d\n", 1 << bit_depth);
@@ -195,6 +196,41 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
         } else {
             printf("Error retrieving the palette.\n");
         }
+    }
+    else if (color_type == PNG_COLOR_TYPE_RGB) {
+        png_set_filler(png_ptr, 0xFF, PNG_FILLER_BEFORE);
+        png_read_update_info(png_ptr, info_ptr);
+        printf("load 17f\n");
+        function_result fr = Am_Imaging_Image_f_createARGB_0(width, height);
+        if (fr.exception) {
+            __result.exception = fr.exception;
+            goto __exit3;
+        }
+        printf("load 17g\n");
+        aobject *image = fr.return_value.value.object_value;
+        printf("load 17h\n");
+        __result.return_value.value.object_value = image;
+        printf("load 17i\n");
+        aobject * pixel_data_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
+        printf("load 17j\n");
+
+        array_holder *pixel_data_array_holder = get_array_holder(pixel_data_array);
+        printf("Pixel Data Array size: %d\n", pixel_data_array_holder->size);
+        unsigned char * pixel_data = (unsigned char *) get_array_data(pixel_data_array_holder);
+
+        printf("load 17k\n");
+
+        row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+        png_size_t rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+
+        for (y = 0; y < height; y++) {
+            row_pointers[y] = (png_byte *) pixel_data + (y * rowbytes) ;
+        }
+        printf("load 17l\n");
+
+        png_read_image(png_ptr, row_pointers);
+        free(row_pointers);
+        printf("load 17m\n");
     } else {
         __throw_simple_exception("Unsupported color type", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
         goto __exit3;

@@ -24,21 +24,15 @@ platforms:
     asmCommand: vasmm68k_mot
     gccAdditionalLibraries:
       - socket
-      - png15
+      - png
       - z
       - m
     additionalHeaders:
     additionalAsmSources:
     additionalCSources:
     additionalIncludePaths:
-      - c-libs/libpng15/include
-      - c-libs/zlib/nofpu/include
     gccAdditionalOptions:
       - -noixemul     
-#      - -L c-libs/libpng15/lib
-#      - -l png15
-#      - -L c-libs/zlib/nofpu/lib
-#      - -l z
     gccLibraryPaths:
       - c-libs/libpng15/lib
       - c-libs/zlib/nofpu/lib
@@ -61,7 +55,7 @@ buildTargets:
   - id: amigaos_docker
     platform: amigaos
     dockerBuild:
-      image: kjeldsenanders/dnf-dev:initial-x86
+      image: amiga-gcc
       buildPath: /host
   - id: amigaos_docker_arm
     platform: amigaos
