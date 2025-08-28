@@ -147,55 +147,61 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
 
         printf("Palette size: %d\n", 1 << bit_depth);
 
-        function_result fr = Am_Imaging_Image_f_createIndexed_0(width, height, 1 << bit_depth);
-        if (fr.exception) {
-            __result.exception = fr.exception;
-            goto __exit3;
-        }
-        printf("load 17b\n");
-        aobject *image = fr.return_value.value.object_value;
-        printf("load 17b2\n");
-        __result.return_value.value.object_value = image;
-        printf("load 17b3\n");
-        aobject * pixel_indices_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelIndices].nullable_value.value.object_value;
-        printf("load 17b4\n");
-
-        array_holder *pixel_indices_array_holder = get_array_holder(pixel_indices_array);
-        printf("Pixel indices Array size: %d\n", pixel_indices_array_holder->size);
-        unsigned char * pixel_indices = (unsigned char *) get_array_data(pixel_indices_array_holder);
-
-        printf("load 17c\n");
-
-        row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
-
-        for (y = 0; y < height; y++) {
-            row_pointers[y] = (png_byte *) pixel_indices + y * width;
-        }
-        printf("load 17d\n");
-
-        png_read_image(png_ptr, row_pointers);
-        free(row_pointers);
-        printf("load 17e\n");
-
-        // read palette
-
-        aobject * palette_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_palette].nullable_value.value.object_value;
-        array_holder *palette_array_holder = get_array_holder(palette_array);
-        printf("Palette Array size: %d, item size: %d\n", palette_array_holder->size, palette_array_holder->item_size);
-        unsigned int * palette_colors = (unsigned int *) get_array_data(palette_array_holder);
+                // read palette
 
         png_colorp palette;
         int num_palette;
 
         if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette) == PNG_INFO_PLTE) {
             printf("Palette has %d colors.\n", num_palette);
+
+            function_result fr = Am_Imaging_Image_f_createIndexed_0(width, height, num_palette);
+            if (fr.exception) {
+                __result.exception = fr.exception;
+                goto __exit3;
+            }
+
+            printf("load 17b\n");
+            aobject *image = fr.return_value.value.object_value;
+            printf("load 17b2\n");
+            __result.return_value.value.object_value = image;
+
+
+            aobject * palette_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_palette].nullable_value.value.object_value;
+            array_holder *palette_array_holder = get_array_holder(palette_array);
+            printf("Palette Array size: %d, item size: %d\n", palette_array_holder->size, palette_array_holder->item_size);
+            unsigned int * palette_colors = (unsigned int *) get_array_data(palette_array_holder);
+
             for (int i = 0; i < num_palette; i++) {
                 palette_colors[i] = palette[i].red << 16 | palette[i].green << 8 | palette[i].blue;
-//                printf("Color %d: R=%d, G=%d, B=%d\n", i, palette[i].red, palette[i].green, palette[i].blue);
             }
+
+            printf("load 17b3\n");
+            aobject * pixel_indices_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelIndices].nullable_value.value.object_value;
+            printf("load 17b4\n");
+
+            array_holder *pixel_indices_array_holder = get_array_holder(pixel_indices_array);
+            printf("Pixel indices Array size: %d\n", pixel_indices_array_holder->size);
+            unsigned char * pixel_indices = (unsigned char *) get_array_data(pixel_indices_array_holder);
+
+            printf("load 17c\n");
+
+            row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+
+            for (y = 0; y < height; y++) {
+                row_pointers[y] = (png_byte *) pixel_indices + y * width;
+            }
+            printf("load 17d\n");
+
+            png_read_image(png_ptr, row_pointers);
+            free(row_pointers);
+            printf("load 17e\n");
+
         } else {
             printf("Error retrieving the palette.\n");
         }
+
+
     }
     else if (color_type == PNG_COLOR_TYPE_RGB) {
         png_set_filler(png_ptr, 0xFF, PNG_FILLER_BEFORE);
