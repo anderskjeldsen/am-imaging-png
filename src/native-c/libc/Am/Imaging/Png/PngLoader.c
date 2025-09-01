@@ -149,6 +149,10 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
             unsigned char * pixel_indices = (unsigned char *) get_array_data(pixel_indices_array_holder);
 
             row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+            if (row_pointers == NULL) {
+                __throw_simple_exception("Out of memory", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
+                goto __exit3;
+            }
 
             for (y = 0; y < height; y++) {
                 row_pointers[y] = (png_byte *) pixel_indices + y * width;
@@ -179,6 +183,11 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
         unsigned char * pixel_data = (unsigned char *) get_array_data(pixel_data_array_holder);
 
         row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+        if (row_pointers == NULL) {
+            __throw_simple_exception("Out of memory", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
+            goto __exit3;
+        }
+
         png_size_t rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
         for (y = 0; y < height; y++) {
