@@ -159,7 +159,7 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
             }
 
             for (y = 0; y < height; y++) {
-                row_pointers[y] = (png_byte *) (pixel_indices + y * width;
+                row_pointers[y] = (png_byte *) (pixel_indices + y * width);
             }
 
             png_read_image(png_ptr, row_pointers);
