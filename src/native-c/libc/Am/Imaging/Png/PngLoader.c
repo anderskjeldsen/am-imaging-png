@@ -118,12 +118,15 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
     }
 
     if (color_type == PNG_COLOR_TYPE_PALETTE) {
-        png_read_update_info(png_ptr, info_ptr);
-
         png_colorp palette;
         int num_palette;
 
         if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette) == PNG_INFO_PLTE) {
+
+            if (bit_depth < 8) {
+                png_set_packing(png_ptr);
+            }
+            png_read_update_info(png_ptr, info_ptr);
 
             function_result fr = Am_Imaging_Image_f_createIndexed_0(width, height, num_palette);
             if (fr.exception) {
@@ -147,10 +150,6 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
 
             array_holder *pixel_indices_array_holder = get_array_holder(pixel_indices_array);
             unsigned char * pixel_indices = (unsigned char *) get_array_data(pixel_indices_array_holder);
-
-            if (bit_depth < 8) {
-                png_set_packing(png_ptr);
-            }
 
             row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
             if (row_pointers == NULL) {
