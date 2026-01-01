@@ -35,7 +35,7 @@ var image = PngLoader.load(file)
 
 - [am-lang-core](https://github.com/anderskjeldsen/am-lang-core) - AmLang core library
 - [am-imaging](https://github.com/anderskjeldsen/am-imaging) - AmLang imaging library
-- libpng - PNG reference library
+- libpng - PNG reference library (libpng-dev for Ubuntu)
 
 ## Building
 

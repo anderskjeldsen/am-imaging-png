@@ -1,0 +1,18 @@
+namespace Example
+{
+
+    class Application {
+        import Am.Lang
+        import Am.Threading
+        import Am.Imaging
+        import Am.Imaging.Png
+        
+        static fun main(args: String[]) {
+            "Load example.png (place it in the same folder as the executable)".println()
+
+            var image = PngLoader.load("example.png")
+            "width: ${image.getWidth()}, height: ${image.getHeight()}".println()
+       }
+    }
+
+}

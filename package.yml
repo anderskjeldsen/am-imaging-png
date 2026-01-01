@@ -51,6 +51,17 @@ platforms:
 #      - -l png
     gccLibraryPaths:
       - /opt/homebrew/lib
+  - id: linux-x64
+    extends: libc
+    gccCommand: gcc
+    gccAdditionalLibraries:
+      - png16
+    additionalHeaders:
+    additionalAsmSources:
+    additionalCSources:
+    additionalIncludePaths:
+    gccLibraryPaths:
+
 buildTargets:
   - id: amigaos_docker
     platform: amigaos
@@ -66,3 +77,5 @@ buildTargets:
     platform: macos-arm
     commands:
       - make -f macos-arm.Makefile all
+  - id: linux-x64
+    platform: linux-x64
