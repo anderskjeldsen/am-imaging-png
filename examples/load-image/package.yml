@@ -28,7 +28,7 @@ platforms:
     additionalIncludePaths:      
     gccAdditionalOptions:
       - -noixemul
-    additionallinkerFlags:
+    additionalLinkerFlags:
       - -noixemul
   - id: linux-x64
     extends: libc
@@ -40,7 +40,7 @@ platforms:
     additionalCSources:
     additionalIncludePaths:      
     gccAdditionalOptions:
-    additionallinkerFlags:
+    additionalLinkerFlags:
 buildTargets:
   - id: amigaos_docker
     platform: amigaos

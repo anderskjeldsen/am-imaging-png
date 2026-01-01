@@ -11,8 +11,8 @@ run-linux-x64:
 build-amigaos:
 	$(CMD) build . -bt amigaos_docker -ll5 -maxOneError
 
-build-deps: # force load dependencies
-	$(CMD) deps .
+deps: # force load dependencies
+	$(CMD) deps . -fld
 
 clean:
 	$(CMD) clean . -bt amigaos_docker
