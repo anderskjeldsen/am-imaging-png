@@ -6,11 +6,13 @@ namespace Example
         import Am.Threading
         import Am.Imaging
         import Am.Imaging.Png
+        import Am.IO
         
         static fun main(args: String[]) {
             "Load example.png (place it in the same folder as the executable)".println()
 
-            var image = PngLoader.load("example.png")
+            var file = new File("example.png")
+            var image = PngLoader.load(file)
             "width: ${image.getWidth()}, height: ${image.getHeight()}".println()
        }
     }
