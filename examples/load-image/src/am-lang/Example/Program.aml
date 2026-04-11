@@ -11,7 +11,7 @@ namespace Example
         static fun main(args: String[]) {
             "Load example.png (place it in the same folder as the executable)".println()
 
-            var file = new File("example.png")
+            var file = new File("cookie_8bit.png")
             var image = PngLoader.load(file)
             "width: ${image.getWidth()}, height: ${image.getHeight()}".println()
        }
