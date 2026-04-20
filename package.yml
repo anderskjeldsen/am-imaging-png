@@ -25,6 +25,7 @@ platforms:
     gccAdditionalLibraries:
       - socket
       - png
+      - jpeg
       - z
       - m
     additionalHeaders:
@@ -41,6 +42,7 @@ platforms:
     gccCommand: gcc
     gccAdditionalLibraries:
       - png16
+      - jpeg
     additionalHeaders:
     additionalAsmSources:
     additionalCSources:
