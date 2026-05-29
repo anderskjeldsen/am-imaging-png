@@ -199,6 +199,53 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
 
         png_read_image(png_ptr, row_pointers);
         free(row_pointers);
+    }
+    else if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
+        // RGBA 8-bit input. libpng emits R G B A bytes per pixel
+        // by default; png_set_swap_alpha rotates that to A R G B,
+        // which is the in-memory order Am.Imaging.Image expects
+        // for its ARGB pixel words on big-endian targets (m68k).
+        // On little-endian targets the same byte sequence reads
+        // back as a different UInt value, but the rendering
+        // pipeline that consumes these pixels works on the byte
+        // layout, not the integer value — same convention the
+        // RGB branch above relies on.
+        //
+        // If the PNG carries 16-bit channels (rare; comes from
+        // some HDR exports), scale them down to 8 first so the
+        // per-pixel size matches createARGB's UInt[] backing.
+        if (bit_depth == 16) {
+            png_set_strip_16(png_ptr);
+        }
+        png_set_swap_alpha(png_ptr);
+        png_read_update_info(png_ptr, info_ptr);
+
+        function_result fr = Am_Imaging_Image_f_createARGB_0(width, height);
+        if (fr.exception) {
+            __result.exception = fr.exception;
+            goto __exit3;
+        }
+        aobject *image = fr.return_value.value.object_value;
+        __result.return_value.value.object_value = image;
+        aobject * pixel_data_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
+
+        array_holder *pixel_data_array_holder = get_array_holder(pixel_data_array);
+        unsigned char * pixel_data = (unsigned char *) get_array_data(pixel_data_array_holder);
+
+        row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+        if (row_pointers == NULL) {
+            __throw_simple_exception("Out of memory", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
+            goto __exit3;
+        }
+
+        png_size_t rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+
+        for (y = 0; y < height; y++) {
+            row_pointers[y] = (png_byte *) pixel_data + (y * rowbytes);
+        }
+
+        png_read_image(png_ptr, row_pointers);
+        free(row_pointers);
     } else {
         __throw_simple_exception("Unsupported color type", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
         goto __exit3;

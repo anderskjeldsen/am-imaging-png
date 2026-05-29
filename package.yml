@@ -7,13 +7,13 @@ dependencies:
     realm: github
     type: git-repo
     tag: latest
-    branch: master
+#    branch: master
     url: https://github.com/anderskjeldsen/am-lang-core.git
   - id: am-imaging
     realm: github
     type: git-repo
     tag: latest
-    branch: master
+#    branch: master
     url: https://github.com/anderskjeldsen/am-imaging.git
 platforms:
   - id: libc
