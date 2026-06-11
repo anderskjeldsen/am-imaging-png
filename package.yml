@@ -61,6 +61,27 @@ platforms:
     additionalCSources:
     additionalIncludePaths:
     gccLibraryPaths:
+  - id: morphos-ppc
+    extends: libc
+    gccCommand: ppc-morphos-gcc -O3
+    # MorphOS ships libpng as png.library (a shared-library wrapper
+    # around libpng 1.2.59). Defining __MORPHOS_SHAREDLIBS in the
+    # bundled <png.h> wrapper switches it from `#include_next <png.h>`
+    # (which would look for a host libpng we don't have) to the
+    # PNGBase-dispatched API; -lpng_shared and -lz_shared then resolve
+    # the stubs to png.library / z.library calls.
+    gccAdditionalLibraries:
+      - png_shared
+      - z_shared
+      - m
+    additionalHeaders:
+    additionalAsmSources:
+    additionalCSources:
+    additionalIncludePaths:
+    gccAdditionalOptions:
+      - -noixemul
+      - -D__MORPHOS_SHAREDLIBS
+    gccLibraryPaths:
 
 buildTargets:
   - id: amigaos_docker
