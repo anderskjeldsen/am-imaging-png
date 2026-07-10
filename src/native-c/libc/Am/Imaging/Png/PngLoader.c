@@ -116,9 +116,13 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
     int number_of_passes;
     png_bytep * row_pointers;
 
-    aobject *file_name_string = file->object_properties.class_object_properties.properties[Am_IO_File_P_filename].nullable_value.value.object_value;
+    // __unwrap every aobject data deref — `file` and `image` may be
+    // cross-thread wrappers (class_ptr == NULL) whose properties[]
+    // slots are aliased with an unrelated union variant, so raw derefs
+    // read NULL / garbage. See feedback_amlang_native_unwrap_cross_thread.
+    aobject *file_name_string_ref = __unwrap(file)->object_properties.class_object_properties.properties[Am_IO_File_P_filename].nullable_value.value.object_value;
 
-    string_holder *file_name_holder = file_name_string->object_properties.class_object_properties.object_data.value.custom_value;
+    string_holder *file_name_holder = __unwrap(file_name_string_ref)->object_properties.class_object_properties.object_data.value.custom_value;
 
     char * const file_name = file_name_holder->string_value;
 
@@ -191,17 +195,17 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
             __result.return_value.value.object_value = image;
 
 
-            aobject * palette_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_palette].nullable_value.value.object_value;
-            array_holder *palette_array_holder = get_array_holder(palette_array);
+            aobject * palette_array = __unwrap(image)->object_properties.class_object_properties.properties[Am_Imaging_Image_P_palette].nullable_value.value.object_value;
+            array_holder *palette_array_holder = get_array_holder(__unwrap(palette_array));
             unsigned int * palette_colors = (unsigned int *) get_array_data(palette_array_holder);
 
             for (int i = 0; i < num_palette; i++) {
                 palette_colors[i] = palette[i].red << 16 | palette[i].green << 8 | palette[i].blue;
             }
 
-            aobject * pixel_indices_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelIndices].nullable_value.value.object_value;
+            aobject * pixel_indices_array = __unwrap(image)->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelIndices].nullable_value.value.object_value;
 
-            array_holder *pixel_indices_array_holder = get_array_holder(pixel_indices_array);
+            array_holder *pixel_indices_array_holder = get_array_holder(__unwrap(pixel_indices_array));
             unsigned char * pixel_indices = (unsigned char *) get_array_data(pixel_indices_array_holder);
 
             row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
@@ -233,9 +237,9 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
         }
         aobject *image = fr.return_value.value.object_value;
         __result.return_value.value.object_value = image;
-        aobject * pixel_data_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
+        aobject * pixel_data_array = __unwrap(image)->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
 
-        array_holder *pixel_data_array_holder = get_array_holder(pixel_data_array);
+        array_holder *pixel_data_array_holder = get_array_holder(__unwrap(pixel_data_array));
         unsigned char * pixel_data = (unsigned char *) get_array_data(pixel_data_array_holder);
 
         row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
@@ -280,9 +284,9 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
         }
         aobject *image = fr.return_value.value.object_value;
         __result.return_value.value.object_value = image;
-        aobject * pixel_data_array = image->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
+        aobject * pixel_data_array = __unwrap(image)->object_properties.class_object_properties.properties[Am_Imaging_Image_P_pixelColors].nullable_value.value.object_value;
 
-        array_holder *pixel_data_array_holder = get_array_holder(pixel_data_array);
+        array_holder *pixel_data_array_holder = get_array_holder(__unwrap(pixel_data_array));
         unsigned char * pixel_data = (unsigned char *) get_array_data(pixel_data_array_holder);
 
         row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
