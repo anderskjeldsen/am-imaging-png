@@ -54,6 +54,12 @@ platforms:
   - id: linux-x64
     extends: libc
     gccCommand: gcc
+    # libpng must be on the link line (GNU ld: an object referencing
+    # png_set_sig_bytes needs -lpng16 explicitly, or the link fails with
+    # "DSO missing from command line"). gccAdditionalLibraries places the
+    # -l flag after the objects, which is what GNU ld's link ordering wants.
+    gccAdditionalLibraries:
+      - png16
   - id: linux-ppc32
     extends: libc
     gccCommand: powerpc-linux-gnu-gcc -O1

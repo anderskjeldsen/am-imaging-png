@@ -135,9 +135,8 @@ function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aob
         goto __exit;
     }
 
-    fread(header, 1, 8, fp);
-    if (png_sig_cmp(AM_PNG_SIG_CAST(header), 0, 8)) {
-        __throw_simple_exception("File is not recognized as a PNG file", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);        
+    if (fread(header, 1, 8, fp) != 8 || png_sig_cmp(AM_PNG_SIG_CAST(header), 0, 8)) {
+        __throw_simple_exception("File is not recognized as a PNG file", "Am_Imaging_Png_PngLoader_loadFromFile_0", &__result);
         goto __exit2;
     }
     /* initialize stuff */
