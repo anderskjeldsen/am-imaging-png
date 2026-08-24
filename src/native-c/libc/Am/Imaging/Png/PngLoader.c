@@ -7,7 +7,14 @@
 #include <Am/Lang/Exception.h>
 #include <libc/core_inline_functions.h>
 
+#if defined(AM_PLATFORM_NINTENDO_PPC)
+/* GameCube/Wii: devkitPPC ships no libpng and the console has no
+ * filesystem for File-based loading anyway (File.exists() is false, so
+ * callers take their non-PNG fallback paths). loadFromFile below throws
+ * if it is ever reached; the other natives are the standard no-ops. */
+#else
 #include <png.h>
+#endif
 #include <stdio.h>
 
 // MorphOS PPC ships libpng 1.2.59 as png.library (dispatched through
@@ -92,6 +99,15 @@ __exit: ;
 	return __result;
 };
 
+#if defined(AM_PLATFORM_NINTENDO_PPC)
+function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aobject *file)
+{
+    function_result __result = {.has_return_value = true};
+    (void) this; (void) file;
+    __throw_simple_exception("PNG loading is not supported on GameCube/Wii (no libpng, no filesystem)", "PngLoader.loadFromFile", &__result);
+    return __result;
+};
+#else
 function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aobject *file)
 {
     function_result __result = {.has_return_value = true};
@@ -321,5 +337,6 @@ __exit:;
     }
     return __result;
 };
+#endif /* AM_PLATFORM_NINTENDO_PPC */
 
 

@@ -105,16 +105,23 @@ platforms:
       - -D__MORPHOS_SHAREDLIBS
     gccLibraryPaths:
 
-  - id: aros-arm64
+  # Shared AROS base (all architectures) — see am-lang-core's `aros`.
+  - id: aros
+    abstract: true
     extends: libc
-    gccCommand: aarch64-aros-gcc -O2
     gccAdditionalLibraries:
-      # AROS ships plain libpng/libz (the *_shared names are MorphOS's
-      # shared-library flavour), so this platform extends libc rather than
-      # morphos-ppc even though the Uix layer above it is MorphOS-derived.
+      # AROS ships plain libpng/libz (the *_shared names are MorphOS-only).
       - png
       - z
       - m
+
+  - id: aros-arm64
+    extends: aros
+    gccCommand: aarch64-aros-gcc -O2
+    gccAdditionalOptions:
+      - -pthread
+    additionalLinkerFlags:
+      - -pthread
 buildTargets:
   - id: amigaos_docker
     platform: amigaos
