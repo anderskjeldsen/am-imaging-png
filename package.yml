@@ -33,9 +33,6 @@ platforms:
     additionalIncludePaths:
     gccAdditionalOptions:
       - -noixemul     
-    gccLibraryPaths:
-      - c-libs/libpng15/lib
-      - c-libs/zlib/nofpu/lib
   - id: macos-arm
     extends: libc
     gccCommand: gcc
@@ -75,6 +72,17 @@ platforms:
   - id: linux-ppc64
     extends: linux-ppc32
     gccCommand: powerpc-linux-gnu-gcc -O2
+  # GameCube/Wii: PngLoader uses the pure-C libc decoder copy in
+  # native-c/nintendo-ppc (no libpng); declared here so amlc assembles
+  # that native dir for nintendo-ppc builds.
+  - id: nintendo-ppc
+    extends: libc
+    gccCommand: "powerpc-eabi-gcc -O2 -mogc -mcpu=750 -meabi -mhard-float"
+    additionalIncludePaths:
+      - /opt/devkitpro/libogc2/gamecube/include
+    gccAdditionalOptions:
+      - -DAM_PLATFORM_NINTENDO_PPC
+      - -DGEKKO
   - id: morphos-ppc
     extends: libc
     gccCommand: ppc-morphos-gcc -O3
@@ -97,6 +105,16 @@ platforms:
       - -D__MORPHOS_SHAREDLIBS
     gccLibraryPaths:
 
+  - id: aros-arm64
+    extends: libc
+    gccCommand: aarch64-aros-gcc -O2
+    gccAdditionalLibraries:
+      # AROS ships plain libpng/libz (the *_shared names are MorphOS's
+      # shared-library flavour), so this platform extends libc rather than
+      # morphos-ppc even though the Uix layer above it is MorphOS-derived.
+      - png
+      - z
+      - m
 buildTargets:
   - id: amigaos_docker
     platform: amigaos
