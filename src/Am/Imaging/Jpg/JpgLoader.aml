@@ -1,0 +1,16 @@
+namespace Am.Imaging.Jpg {
+
+    native class JpgLoader {
+        import Am.Lang
+        import Am.IO
+        import Am.Imaging
+
+        static fun load(file: File): Image {
+            var loader = new JpgLoader()
+            return loader.loadFromFile(file)
+        }
+
+        private native fun loadFromFile(file: File): Image
+    }
+
+}
