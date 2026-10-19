@@ -7,11 +7,12 @@
 #include <Am/Lang/Exception.h>
 #include <libc/core_inline_functions.h>
 
-#if defined(AM_PLATFORM_NINTENDO_PPC)
-/* GameCube/Wii: devkitPPC ships no libpng and the console has no
- * filesystem for File-based loading anyway (File.exists() is false, so
- * callers take their non-PNG fallback paths). loadFromFile below throws
- * if it is ever reached; the other natives are the standard no-ops. */
+#if defined(AM_PLATFORM_NINTENDO_PPC) && !defined(AM_PNG_HAVE_LIBPNG)
+/* GameCube/Wii without libpng: loadFromFile below throws if it is ever
+ * reached; the other natives are the standard no-ops. devkitPro's portlibs
+ * DO carry libpng 1.6 + zlib (/opt/devkitpro/portlibs/ppc), so an app that
+ * reads files (from SD via libfat) defines AM_PNG_HAVE_LIBPNG, adds that
+ * include/lib path and links png16 + z, and gets the normal libpng loader. */
 #else
 #include <png.h>
 #endif
@@ -99,7 +100,7 @@ __exit: ;
 	return __result;
 };
 
-#if defined(AM_PLATFORM_NINTENDO_PPC)
+#if defined(AM_PLATFORM_NINTENDO_PPC) && !defined(AM_PNG_HAVE_LIBPNG)
 function_result Am_Imaging_Png_PngLoader_loadFromFile_0(aobject *const this, aobject *file)
 {
     function_result __result = {.has_return_value = true};

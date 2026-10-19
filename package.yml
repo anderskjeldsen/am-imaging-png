@@ -72,14 +72,16 @@ platforms:
   - id: linux-ppc64
     extends: linux-ppc32
     gccCommand: powerpc-linux-gnu-gcc -O2
-  # GameCube/Wii: PngLoader uses the pure-C libc decoder copy in
-  # native-c/nintendo-ppc (no libpng); declared here so amlc assembles
-  # that native dir for nintendo-ppc builds.
+  # GameCube/Wii. Without libpng the loader throws (see PngLoader.c); an
+  # app that defines AM_PNG_HAVE_LIBPNG and links png16 + z from devkitPro's
+  # portlibs gets the normal libpng loader -- the portlibs include path is
+  # here because include paths apply per package.
   - id: nintendo-ppc
     extends: libc
     gccCommand: "powerpc-eabi-gcc -O2 -mogc -mcpu=750 -meabi -mhard-float"
     additionalIncludePaths:
       - /opt/devkitpro/libogc2/gamecube/include
+      - /opt/devkitpro/portlibs/ppc/include
     gccAdditionalOptions:
       - -DAM_PLATFORM_NINTENDO_PPC
       - -DGEKKO
