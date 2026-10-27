@@ -60,6 +60,17 @@ platforms:
     gccAdditionalLibraries:
       - png16
       - z
+  # 32-bit Windows / ReactOS: MSYS2's mingw32 (msvcrt) libpng + zlib.
+  - id: windows-x86
+    extends: windows-x64
+    gccCommand: i686-w64-mingw32-gcc -O2
+    gccLibraryPaths:
+      - /Users/anderskjeldsen/Projects/AmLang/windows-deps/msys2/mingw32/lib
+    gccAdditionalLibraries:
+      # MSYS2 builds them with -fstack-protector: __stack_chk_* live in libssp.
+      - png16
+      - z
+      - ssp
   - id: linux-x64
     extends: libc
     gccCommand: gcc
@@ -133,9 +144,10 @@ platforms:
     extends: aros
     gccCommand: aarch64-aros-gcc -O2
     gccAdditionalOptions:
-      - -pthread
+      - -fno-common   # AROS's loader REFUSES COMMON symbols; gcc 6.5.0 defaults to -fcommon
+      - -D_REENTRANT  # aarch64-aros-gcc rejects -pthread outright
     additionalLinkerFlags:
-      - -pthread
+      - -lpthread     # no driver links it without -pthread, which AROS gcc rejects
 buildTargets:
   - id: amigaos_docker
     platform: amigaos
