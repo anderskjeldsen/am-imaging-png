@@ -48,6 +48,18 @@ platforms:
 #      - -l png
     gccLibraryPaths:
       - /opt/homebrew/lib
+  # Windows (MinGW-w64): static libpng + zlib from MSYS2's mingw64 packages,
+  # unpacked in ../windows-deps/msys2.
+  - id: windows-x64
+    extends: libc
+    gccCommand: x86_64-w64-mingw32-gcc -O2
+    gccAdditionalOptions:
+      - -I/Users/anderskjeldsen/Projects/AmLang/windows-deps/msys2/mingw64/include
+    gccLibraryPaths:
+      - /Users/anderskjeldsen/Projects/AmLang/windows-deps/msys2/mingw64/lib
+    gccAdditionalLibraries:
+      - png16
+      - z
   - id: linux-x64
     extends: libc
     gccCommand: gcc
