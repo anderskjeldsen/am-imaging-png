@@ -108,6 +108,20 @@ platforms:
     gccAdditionalOptions:
       - -DAM_PLATFORM_NINTENDO_PPC
       - -DGEKKO
+  # Nintendo 3DS: devkitPro's portlibs libpng (in devkitpro/devkitarm).
+  - id: nintendo-3ds
+    extends: libc
+    gccCommand: arm-none-eabi-gcc -O2 -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -mword-relocations -ffunction-sections -fdata-sections
+    gccAdditionalOptions:
+      - -D__3DS__
+      - -I/opt/devkitpro/portlibs/3ds/include
+    gccLibraryPaths:
+      - /opt/devkitpro/portlibs/3ds/lib
+    # m after png16: GNU ld resolves left to right, and libpng calls pow().
+    gccAdditionalLibraries:
+      - png16
+      - z
+      - m
   - id: morphos-ppc
     extends: libc
     gccCommand: ppc-morphos-gcc -O3
